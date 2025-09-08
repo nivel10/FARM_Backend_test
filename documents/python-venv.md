@@ -2,9 +2,6 @@
 
 ```sh
 python -m venv <environmentName>
-```
-
-```sh
 <environtmentName>\Scripts\activate
 ```
 
