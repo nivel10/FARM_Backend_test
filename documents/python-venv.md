@@ -1,8 +1,14 @@
-## how activate python venv
+## How activate python venv
 
 ```sh
 python -m venv <environmentName>
 ```
+
+```sh
+<environtmentName>\Scripts\activate
+```
+
+or 
 
 Then select in [Visual Studio Code]:
 
