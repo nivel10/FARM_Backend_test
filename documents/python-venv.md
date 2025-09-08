@@ -18,7 +18,13 @@ Finally install the modules:
    ```sh
    <environtmentName>pip install fastapi uvicorn motor
    ```
-   
+
+how deactivate environtment
+
+```sh
+deactivate
+```
+
 [//]: # (These are reference links used in the body this note)
 
    [Visual Studio Code]: <https://code.visualstudio.com/>
