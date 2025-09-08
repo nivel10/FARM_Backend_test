@@ -1,0 +1,13 @@
+GETa http://127.0.0.1:8000 HTTP/1.1
+
+###
+GET http://127.0.0.1:8000/items/2014 HTTP/1.1
+
+###
+put http://127.0.0.1:8000/items/2014 HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "item 1",
+    "price": 2014.12
+}
