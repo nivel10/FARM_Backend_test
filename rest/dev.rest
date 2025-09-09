@@ -1,13 +1,24 @@
-GETa http://127.0.0.1:8000 HTTP/1.1
+GET http://127.0.0.1:8000/tasks HTTP/1.1
 
 ###
-GET http://127.0.0.1:8000/items/2014 HTTP/1.1
+GET http://127.0.0.1:8000/tasks/68c070a221ef5863420aa60d HTTP/1.1
 
 ###
-put http://127.0.0.1:8000/items/2014 HTTP/1.1
+POST http://127.0.0.1:8000/tasks HTTP/1.1
 Content-Type: application/json
 
 {
-    "name": "item 1",
-    "price": 2014.12
+    "title": "task 22"
 }
+
+###
+PUT http://127.0.0.1:8000/tasks/68c05dbefcdd708c7e869b19 HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "task 4",
+    "completed": true
+}
+
+###
+DELETE  http://127.0.0.1:8000/tasks/68c070a221ef5863420aa60d HTTP/1.1
