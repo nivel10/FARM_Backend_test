@@ -1,16 +1,18 @@
-
 from db.database import collection_tasks
 from models.task import Task
 from bson import ObjectId
 
-async def get_db_tasks(key: str = '', value: any = ''):
-    tasks = []
+async def get_db_tasks(key: str = '', value: any = None):
+    tasks: list = []
+
     if key != '' and value != '':
         documents = collection_tasks.find({key: value})
     else:
         documents = collection_tasks.find({})
+
     async for document in documents:
         tasks.append(document)
+
     return tasks
 
 async def get_db_task(id: str):

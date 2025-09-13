@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, HTTPException
-from models.user import User_register, User_register_response
+from models.user import User_register, User_register_response, User_login
 from db.db_users import create_db_user, get_db_one_user
 from schemas.user import user_resgister_response_schema
 
@@ -10,7 +10,7 @@ auth_router = APIRouter(
 
 @auth_router.post('/register', status_code=status.HTTP_201_CREATED, response_model=User_register_response)
 async def register(user: User_register):
-    user_found = await get_db_one_user(key='email', value=user.email)
+    user_found = await get_db_one_user(key='email', value=user.email, key_2='', value_2=None)
     if user_found:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -19,3 +19,14 @@ async def register(user: User_register):
     
     document = await create_db_user(user)
     return user_resgister_response_schema(document)
+
+@auth_router.post('/login', status_code=status.HTTP_200_OK, response_model=User_register_response)
+async def login(data: User_login):
+    user_found = await get_db_one_user(key='email', value=data.email, key_2='password', value_2=data.password)
+    if not user_found:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='email or password incorrect',
+        )
+    
+    return user_resgister_response_schema(user_found)

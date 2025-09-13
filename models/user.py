@@ -18,3 +18,8 @@ class User(User_register):
 
 class User_register_response(User_base):
     id: Optional[str] = None
+
+class User_login(BaseModel):
+    email: str
+    password: str
+    remember_me: Optional[bool] = False
