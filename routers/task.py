@@ -2,10 +2,10 @@ from fastapi import APIRouter, HTTPException, status
 # from collections import Counter
 from schemas.task import task_schema, tasks_schema
 from models.task import Task
-from db.database import get_db_tasks, get_db_task, create_db_task, get_db_one_task, update_db_task, delete_db_task, get_db_many_tasks
+from db.db_task import get_db_tasks, get_db_task, create_db_task, get_db_one_task, update_db_task, delete_db_task, get_db_many_tasks
 
 task_router = APIRouter(
-    prefix='/tasks',
+    prefix='/api/tasks',
     tags=['tasks']
 )
 
