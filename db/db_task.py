@@ -31,7 +31,7 @@ async def update_db_task(id: str, task: Task):
     if '_id' in task_dict:
         del task_dict['_id']
     
-    updated_task = await collection_tasks.update_one({'_id': ObjectId(id),}, {'$set': task_dict})
+    await collection_tasks.update_one({'_id': ObjectId(id),}, {'$set': task_dict})
     return await get_db_one_task(key='_id', value=id)
 
 async def delete_db_task(id: str):
@@ -44,7 +44,7 @@ async def delete_db_task(id: str):
     return await collection_tasks.delete_one({'_id': ObjectId(id), })
     
 async def get_db_one_task(key: str, value: any):
-    task: any = any
+    task: Task = Task
     if key == '_id':
         task = await collection_tasks.find_one({key: ObjectId(value)})
     else:
@@ -53,7 +53,7 @@ async def get_db_one_task(key: str, value: any):
     return task
 
 async def get_db_many_tasks(filter: dict = {}):
-    tasks: list= []
+    tasks: list= [Task]
     documents = collection_tasks.find(filter)
 
     async for document in documents:

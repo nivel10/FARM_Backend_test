@@ -13,7 +13,6 @@ task_router = APIRouter(
 async def get_tasks():
     documents = await get_db_tasks()
     # documents = await get_db_tasks(key='is_deleted', value=False)
-    
     return tasks_schema(documents)
 
 @task_router.get('/{id}', response_model=Task)
