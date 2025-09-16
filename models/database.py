@@ -1,10 +1,10 @@
 from pydantic import BaseModel
 
-class Db_collections(BaseModel):
+class DbCollections(BaseModel):
     tasks: str
     users: str
 
-class Db_settings(BaseModel):
+class DbSettings(BaseModel):
     url: str
     name: str
     # collections: Db_collections

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, HTTPException
-from models.user import User_register, User_register_response, User_login
+from models.user import UserRegister, UserRegisterResponse, UserLogin
 from db.db_users import create_db_user, get_db_one_user
 from schemas.user import user_resgister_response_schema
 
@@ -8,8 +8,8 @@ auth_router = APIRouter(
     tags=['auth']
 )
 
-@auth_router.post('/register', status_code=status.HTTP_201_CREATED, response_model=User_register_response)
-async def register(user: User_register):
+@auth_router.post('/register', status_code=status.HTTP_201_CREATED, response_model=UserRegisterResponse)
+async def register(user: UserRegister):
     user_found = await get_db_one_user(key='email', value=user.email, key_2='', value_2=None)
     if user_found:
         raise HTTPException(
@@ -20,8 +20,8 @@ async def register(user: User_register):
     document = await create_db_user(user)
     return user_resgister_response_schema(document)
 
-@auth_router.post('/login', status_code=status.HTTP_200_OK, response_model=User_register_response)
-async def login(data: User_login):
+@auth_router.post('/login', status_code=status.HTTP_200_OK, response_model=UserRegisterResponse)
+async def login(data: UserLogin):
     user_found = await get_db_one_user(key='email', value=data.email, key_2='password', value_2=data.password)
     if not user_found:
         raise HTTPException(

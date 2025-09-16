@@ -1,15 +1,15 @@
 import os
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
-from models.database import Db_settings, Db_collections
+from models.database import DbSettings, DbCollections
 
 load_dotenv()
 
-db_collections: Db_collections = Db_collections(
+db_collections: DbCollections = DbCollections(
     tasks='tasks',
     users='users',
 )
-db_settings = Db_settings = Db_settings(
+db_settings = DbSettings = DbSettings(
     url=os.getenv('MONGO_DB_URL'),
     name=os.getenv('MONGO_DB_NAME'),
     # collections=db_collections,

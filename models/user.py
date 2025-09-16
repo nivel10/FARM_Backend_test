@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 
-class User_base(BaseModel):
+class UserBase(BaseModel):
     first_name: str
     last_name: str
     email: str
@@ -10,16 +10,16 @@ class User_base(BaseModel):
     created_at: Optional[int] = int(datetime.timestamp(datetime.now()))
     updated_at: Optional[int] = int(datetime.timestamp(datetime.now()))
 
-class User_register(User_base):
+class UserRegister(UserBase):
     password: str
 
-class User(User_register):
+class User(UserRegister):
     id: Optional[str] = None
 
-class User_register_response(User_base):
+class UserRegisterResponse(UserBase):
     id: Optional[str] = None
 
-class User_login(BaseModel):
+class UserLogin(BaseModel):
     email: str
     password: str
     remember_me: Optional[bool] = False

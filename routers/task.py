@@ -21,7 +21,7 @@ async def get_task(id: str):
     if not document:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'task not found. Id: {id}'
+            detail=f'record not found. Id: {id}'
         )
     
     return task_schema(document)
@@ -60,7 +60,7 @@ async def delete_task(id: str):
     if not task_found:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'task not found. Id: {id}',
+            detail=f'record not found. Id: {id}',
         )
     
     # return await delete_db_task(id)
@@ -68,7 +68,7 @@ async def delete_task(id: str):
     if result.deleted_count <= 0 or not result.acknowledged:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'task not found. Id: {id}',
+            detail=f'record not found. Id: {id}',
         )
     
     return task_schema(task_found)

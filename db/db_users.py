@@ -38,6 +38,9 @@ async def update_db_user(id: str, user: User) -> User:
     await collection_users.update_one({'_id': ObjectId(id)}, {'$set': user_dict})
     return await get_db_one_user(key='_id', value=id, key_2='', value_2=None)
 
+async def delete_db_user(id: str):
+    return await collection_users.delete_one({'_id': ObjectId(id)})
+
 async def get_db_one_user(key: str = '', value: any = None, key_2: str = '', value_2: any = None ):
     user: User = User
     if key != '' and key_2 != '':
