@@ -21,13 +21,6 @@ async def get_tasks(bearerToken: BearerToken = Depends(get_header_authorization_
     # documents = await get_db_tasks(key='is_deleted', value=False)
     return tasks_schema(documents)
 
-@task_router.get('/user/{created_by}', status_code=status.HTTP_200_OK, response_model=list[Task])
-async def get_tasks_user(bearerToken: BearerToken = Depends(get_header_authorization_bearer), created_by: str = ''):
-    tasks: list = []
-
-    tasks = await get_db_many_tasks({'created_by': ObjectId(created_by)})
-    return tasks_schema(datas=tasks)
-
 @task_router.get('/{id}', status_code=status.HTTP_200_OK, response_model=Task)
 async def get_task(bearerToken: BearerToken = Depends(get_header_authorization_bearer), id: str = ''):
     document = await get_db_task(id)
@@ -38,21 +31,6 @@ async def get_task(bearerToken: BearerToken = Depends(get_header_authorization_b
         )
     
     return task_schema(document)
-
-@task_router.get('/user/{id}/{user_id}', status_code=status.HTTP_200_OK, response_model=Task)
-async def get_task_id_userId(bearerToken: BearerToken = Depends(get_header_authorization_bearer), id: str = '', user_id: str = ''):
-    filter: dict = {
-        '_id': ObjectId(id),
-        'created_by': ObjectId(user_id),
-    }
-    task_found = await get_db_many_tasks(filter=filter)
-    if not task_found or len(task_found) <= 0:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'record not foud. Id: {id}; user: {user_id}',
-        )
-    
-    return task_schema(task_found[0])
 
 @task_router.post('/', status_code=status.HTTP_201_CREATED, response_model=Task)
 async def create_task(bearerToken: BearerToken = Depends(get_header_authorization_bearer), task: Task = {}):
@@ -108,6 +86,47 @@ async def update_task(bearerToken: BearerToken = Depends(get_header_authorizatio
 
     return task_schema(updated_task)
 
+@task_router.delete('/{id}', status_code=status.HTTP_200_OK, response_model=Task)
+async def delete_task(bearerToken: BearerToken = Depends(get_header_authorization_bearer), id: str = {}):
+    task_found = await get_db_one_task(key='_id', value=id)
+    if not task_found:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'record not found. Id: {id}',
+        )
+    
+    # return await delete_db_task(id)
+    result = await delete_db_task(id)
+    if result.deleted_count <= 0 or not result.acknowledged:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'record not found. Id: {id}',
+        )
+    
+    return task_schema(task_found)
+
+@task_router.get('/user/{created_by}', status_code=status.HTTP_200_OK, response_model=list[Task])
+async def get_tasks_user(bearerToken: BearerToken = Depends(get_header_authorization_bearer), created_by: str = ''):
+    tasks: list = []
+
+    tasks = await get_db_many_tasks({'created_by': ObjectId(created_by)})
+    return tasks_schema(datas=tasks)
+
+@task_router.get('/user/{id}/{user_id}', status_code=status.HTTP_200_OK, response_model=Task)
+async def get_task_id_userId(bearerToken: BearerToken = Depends(get_header_authorization_bearer), id: str = '', user_id: str = ''):
+    filter: dict = {
+        '_id': ObjectId(id),
+        'created_by': ObjectId(user_id),
+    }
+    task_found = await get_db_many_tasks(filter=filter)
+    if not task_found or len(task_found) <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'record not foud. Id: {id}; user: {user_id}',
+        )
+    
+    return task_schema(task_found[0])
+
 @task_router.put('/user/{id}/{user_id}', status_code=status.HTTP_200_OK, response_model=Task)
 async def update_task_user(bearerToken: BearerToken = Depends(get_header_authorization_bearer), id: str = '', user_id: str = '', task: Task = {}, ):
     task_found = await get_db_many_tasks({'_id': ObjectId(id), 'created_by': ObjectId(user_id)})
@@ -131,21 +150,20 @@ async def update_task_user(bearerToken: BearerToken = Depends(get_header_authori
     
     return task_schema(updated_task)
 
-@task_router.delete('/{id}', response_model=Task)
-async def delete_task(bearerToken: BearerToken = Depends(get_header_authorization_bearer), id: str = {}):
-    task_found = await get_db_one_task(key='_id', value=id)
-    if not task_found:
+@task_router.delete('/user/{id}/{user_id}', status_code=status.HTTP_200_OK, response_model=Task)
+async def delete_task_user(bearerToken: BearerToken = Depends(get_header_authorization_bearer), id: str = '', user_id: str = '', ):
+    task_found = await get_db_many_tasks({'_id': ObjectId(id), 'created_by': ObjectId(user_id)})
+    if not task_found or len(task_found) <= 0:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f'record not found. Id: {id}',
         )
     
-    # return await delete_db_task(id)
-    result = await delete_db_task(id)
+    result = await delete_db_task(id=id)
     if result.deleted_count <= 0 or not result.acknowledged:
-        raise HTTPException(
+         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f'record not found. Id: {id}',
         )
     
-    return task_schema(task_found)
+    return task_schema(task_found[0])
