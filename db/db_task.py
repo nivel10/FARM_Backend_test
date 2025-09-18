@@ -36,6 +36,13 @@ async def update_db_task(id: str, task: Task):
     if '_id' in task_dict:
         del task_dict['_id']
     
+    if 'id' in task_dict:
+        del task_dict['id']
+
+    if 'created_by' in task_dict:
+        if isinstance(task_dict['created_by'], str):
+            task_dict['created_by'] = ObjectId(task_dict['created_by'])
+    
     await collection_tasks.update_one({'_id': ObjectId(id),}, {'$set': task_dict})
     return await get_db_one_task(key='_id', value=id)
 

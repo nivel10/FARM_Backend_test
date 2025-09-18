@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status, Header, Security
+from fastapi import HTTPException, status, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from models.common import BearerToken
 
