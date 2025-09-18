@@ -7,7 +7,8 @@ class Task (BaseModel):
     created_by: str
     title: str
     description: Optional[str] = None
-    date: int = int(datetime.timestamp(datetime.now()))
+    # date: int = int(datetime.timestamp(datetime.now()))
+    date: Optional[str] = None
     completed: Optional[bool] = False
     is_deleted: Optional[bool] = False
     created_at: int = int(datetime.timestamp(datetime.now()))

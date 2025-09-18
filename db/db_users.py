@@ -16,6 +16,9 @@ async def get_db_users(key: str = '', value: any = None) -> list:
         
     return users
 
+async def get_db_user(id: str) -> User:
+    return await get_db_one_user(key='_id', value=id)
+
 async def create_db_user(user: User) -> User:
     data_dict = dict(user)
     if 'id' in data_dict:

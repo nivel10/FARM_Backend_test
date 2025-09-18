@@ -23,9 +23,9 @@ async def create_db_task(task: Task):
     if 'id' in task_dict:
         del task_dict['id']
     
-    if 'created_by' in task:
-        if isinstance(task['created_by'], str):
-            task['created_by'] = ObjectId(task['created_by'])
+    if 'created_by' in task_dict:
+        if isinstance(task_dict['created_by'], str):
+            task_dict['created_by'] = ObjectId(task_dict['created_by'])
     
     new_task = await collection_tasks.insert_one(task_dict)
     new_task = await collection_tasks.find_one({'_id': new_task.inserted_id, })

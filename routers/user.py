@@ -1,9 +1,11 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from schemas.user import users_register_respose_schema, user_resgister_response_schema
 from models.user import UserRegisterResponse, User
-from models.auth import BearerToken, UserPassword
+from models.auth import  UserPassword
+from models.common import BearerToken
 from db.db_users import get_db_users, get_db_one_user, update_db_user, delete_db_user
-from dependencies.auth import get_header_authorization_bearer, get_header_user_password
+from dependencies.auth import get_header_user_password
+from dependencies.common import get_header_authorization_bearer
 
 user_router = APIRouter(
     prefix='/api/users',

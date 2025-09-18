@@ -1,9 +1,13 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from bson import ObjectId
 # from collections import Counter
 from schemas.task import task_schema, tasks_schema
 from models.task import Task
 from db.db_task import get_db_tasks, get_db_task, create_db_task, get_db_one_task, update_db_task, delete_db_task, get_db_many_tasks
+from db.db_users import get_db_user
+from dependencies.common import get_header_authorization_bearer
+from models.common import BearerToken
 
 task_router = APIRouter(
     prefix='/api/tasks',
@@ -11,10 +15,20 @@ task_router = APIRouter(
 )
 
 @task_router.get('/', status_code=status.HTTP_200_OK, response_model=list[Task])
-async def get_tasks():
+# async def get_tasks(token: BearerToken = Depends(get_header_authorization_bearer)):
+async def get_tasks(bearerToken: BearerToken = Depends(get_header_authorization_bearer)):
+    print(bearerToken)
+
     documents = await get_db_tasks()
     # documents = await get_db_tasks(key='is_deleted', value=False)
     return tasks_schema(documents)
+
+@task_router.get('/user/{created_by}', status_code=status.HTTP_200_OK, response_model=list[Task])
+async def get_tasks_user(created_by: str):
+    tasks: list = []
+
+    tasks = await get_db_many_tasks({'created_by': ObjectId(created_by)})
+    return tasks_schema(datas=tasks)
 
 @task_router.get('/{id}', status_code=status.HTTP_200_OK, response_model=Task)
 async def get_task(id: str):
@@ -27,20 +41,20 @@ async def get_task(id: str):
     
     return task_schema(document)
 
-@task_router.get('/{id}/{user_id}', status_code=status.HTTP_200_OK)
+@task_router.get('/user/{id}/{user_id}', status_code=status.HTTP_200_OK, response_model=Task)
 async def get_task_id_userId(id: str, user_id: str):
     filter: dict = {
         '_id': ObjectId(id),
         'created_by': ObjectId(user_id),
     }
     task_found = await get_db_many_tasks(filter=filter)
-    print(task_found)
     if not task_found or len(task_found) <= 0:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f'record not foud. Id: {id}; user: {user_id}',
         )
-    return len(task_found)
+    
+    return task_schema(task_found[0])
 
 @task_router.post('/', status_code=status.HTTP_201_CREATED, response_model=Task)
 async def create_task(task: Task):
@@ -69,7 +83,7 @@ async def create_task(task: Task):
             detail=f'the record already exists. {task.title}',
         )
 
-    user_found = await get_db_one_task(key='_id', value=task.created_by)
+    user_found = await get_db_user(id=task.created_by)
     if not user_found:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
